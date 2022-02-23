@@ -19,7 +19,6 @@ namespace Notepad
         private FontDialog fontDialog;
         private ColorDialog colorDialog;
 
-
         public Form1()
         {
             InitializeComponent();
@@ -33,108 +32,54 @@ namespace Notepad
         // create new file
         private void NewFile()
         {
-            try
+            if (string.IsNullOrEmpty(this.richTextBox1.Text))
             {
-                if (string.IsNullOrEmpty(this.richTextBox1.Text))
-                {
-                    MessageBox.Show("You need save file first.");
-                }
-                else
-                {
-                    this.richTextBox1.Text = string.Empty;
-                    this.Text = "Simple Notepad - Untitled";
-                }
+                MessageBox.Show("You need save file first.");
             }
-            catch (Exception ex)
+            else
             {
-
-            }
-            finally
-            {
-
+                this.richTextBox1.Text = string.Empty;
+                this.Text = "Simple Notepad - Untitled";
             }
         }
 
         private void SaveFile()
         {
-            try
+            savefileDialog.Filter = "Untitled File Text (*.txt) | *.txt";
+            if (savefileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (!string.IsNullOrEmpty(this.richTextBox1.Text))
-                {
-                    savefileDialog = new SaveFileDialog();
-                    savefileDialog.Filter = "Untitled File Text (*.txt) | *.txt";
-                    if (savefileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(savefileDialog.FileName, this.richTextBox1.Text);
-                        this.Text = savefileDialog.FileName;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("The File is empty!");
-                }
+                File.WriteAllText(savefileDialog.FileName, this.richTextBox1.Text);
+                this.Text = savefileDialog.FileName;
             }
-            catch (Exception ex)
-            {
-
-            }
-            finally
-            {
-
-            }
-
         }
 
         private void OpenFile()
         {
-            try
+            OpenFileDialog openfileDialog = new OpenFileDialog();
+            if (openfileDialog.ShowDialog() == DialogResult.OK)
             {
-                OpenFileDialog openfileDialog = new OpenFileDialog();
-                if (openfileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    this.richTextBox1.Text = File.ReadAllText(openfileDialog.FileName);
-                    this.Text = openfileDialog.FileName;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error while trying to open file.");
-            }
-            finally
-            {
-                openFileDialog = null;
+                this.richTextBox1.Text = File.ReadAllText(openfileDialog.FileName);
+                this.Text = openfileDialog.FileName;
             }
 
         }
 
         private void SaveFileAs()
         {
-            try
+            if (!string.IsNullOrEmpty(this.richTextBox1.Text))
             {
-                if (!string.IsNullOrEmpty(this.richTextBox1.Text))
+                savefileDialog = new SaveFileDialog();
+                savefileDialog.Filter = "All Files (*.*)| *.*";
+                if (savefileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    savefileDialog = new SaveFileDialog();
-                    savefileDialog.Filter = "All Files (*.*)| *.*";
-                    if (savefileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(savefileDialog.FileName, this.richTextBox1.Text);
-                        this.Text = savefileDialog.FileName;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("The File is empty!");
+                    File.WriteAllText(savefileDialog.FileName, this.richTextBox1.Text);
+                    this.Text = savefileDialog.FileName;
                 }
             }
-            catch (Exception ex)
+            else
             {
-
+                MessageBox.Show("The File is empty!");
             }
-            finally
-            {
-
-            }
-
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -193,6 +138,8 @@ namespace Notepad
         {
             fontDialog = new FontDialog();
             colorDialog = new ColorDialog();
+            savefileDialog = new SaveFileDialog();
+            openFileDialog = new OpenFileDialog();
         }
 
         private void unitedProgrammingServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -206,59 +153,54 @@ namespace Notepad
 
         private void fontToolStripMenuItem1_Click(object sender, EventArgs e) // main font
         {
-            try
+            if (fontDialog.ShowDialog() == DialogResult.OK)
             {
-                if (fontDialog.ShowDialog() == DialogResult.OK)
-                {
-                    this.richTextBox1.Font = fontDialog.Font;
-                }
-            }
-            catch
-            {
-
-            }
-            finally
-            {
-
+                this.richTextBox1.Font = fontDialog.Font;
             }
         }
 
         private void foregroundColorToolStripMenuItem_Click(object sender, EventArgs e) // foreground color
         {
-            try
+            if (colorDialog.ShowDialog() == DialogResult.OK)
             {
-                if (colorDialog.ShowDialog() == DialogResult.OK)
-                {
-                    this.richTextBox1.ForeColor = colorDialog.Color;
-                }
-            }
-            catch
-            {
-
-            }
-            finally
-            {
-
+                this.richTextBox1.ForeColor = colorDialog.Color;
             }
         }
 
         private void backgroundToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
+            if (colorDialog.ShowDialog() == DialogResult.OK)
             {
-                if (colorDialog.ShowDialog() == DialogResult.OK)
-                {
-                    this.richTextBox1.BackColor = colorDialog.Color;
-                }
+                this.richTextBox1.BackColor = colorDialog.Color;
             }
-            catch
-            {
+        }
 
-            }
-            finally
-            {
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e) // copy
+        {
+            this.richTextBox1.Copy();
+        }
 
-            }
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e) // paste
+        {
+            this.richTextBox1.Paste();
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e) // select all
+        {
+            this.richTextBox1.SelectAll();
+        }
+
+        private void findToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            textBox1.Visible = true;
+            button1.Visible = true;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.richTextBox1.Find(textBox1.Text);
+            textBox1.Visible = false;
+            button1.Visible = false;
         }
     }
 }
